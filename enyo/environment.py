@@ -23,7 +23,7 @@ class Company(object):
                 'growth_potential': 3,
                 'profit_potential': 3,
                 'financial_stability': 3,
-                'know_how': self.space_params['competitive_advantage']['know_how'],
+                'know_how': 3,
                 'resource_utilization': 3,
                 'capital_intensity': 3,
                 'ease_of_entry': 3,
@@ -51,7 +51,13 @@ class Company(object):
         }
 
     def set_space_params(self, args):
-        pass
+        for key in self.space_params:
+            category_sum = 0
+            for i, category in enumerate(self.space_params[key]):
+                category_sum += self.space_params[key][category]
+            print category_sum, i
+            setattr(self, key,  float(category_sum) / float(i + 1))
+        print self.competitive_advantage
 
     def set_space_values(self, ca, ia, es, fs):
         self.competitive_advantage = ca
