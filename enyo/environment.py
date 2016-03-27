@@ -10,13 +10,32 @@ class CustomerTypes(Enum):
     Laggard = 15
 
 
+class Product(object):
+
+    def __init__(self):
+        self.version = 0
+        self.price = np.infinite
+        self.innovation_points = 0.
+        self.quality = 0.
+
+    def change_params(self, params, bump_version=True):
+        if bump_version:
+            self.version += 1
+        self.price = params.get('price', np.infinite)
+        self.innovation_points = params.get('innovation', 0.)
+        self.quality = params.get('quality', 0.)
+
+
 class Company(object):
     def __init__(self, name):
         self.name = name
+        self.product = None
         self.competitive_advantage = 0.
         self.industry_attractiveness = 0.
         self.environmental_stability = 0.
         self.financial_strength = 0.
+
+        self.history = []
 
         self.customer_loyalty = 3
         self.space_params = {
@@ -80,6 +99,13 @@ class Company(object):
         self.environmental_stability = es
         self.financial_strength = fs
 
+    def make_product(self, params):
+        self.product = Product()
+        self.product.change_params(params)
+
+    def make_move(self):
+        pass
+
 
 class Customer(object):
 
@@ -95,8 +121,13 @@ class Customer(object):
 
         self._define_type()
 
-    def decide_to_buy(self, products):
-        pass
+    def decide_to_buy(self, companies):
+        scores = []
+        for company in companies:
+            temp_product = company.product
+            score = 0.  # decided by loyalty, price , quality etc
+            scores.append(score)
+        product = companies[scores.index(max(scores))].product
 
     def _define_type(self):
         """
@@ -139,12 +170,19 @@ class Market(object):
         self.add_customers(int(len(self.customers) * self.growth_rate))
 
 
-class Simulation(object):
+# class Strategy(object):
+#
+#     def __init__(self, product, params):
+#         pass
+
+
+
+class TheGame(object):
 
     def __init__(self, args):
         self.market = args.get('market', None)
         self.companies = args.get('companies', None)
         self.ours = args.get('ours', None)
 
-    def run(self):
+    def play(self):
         pass
