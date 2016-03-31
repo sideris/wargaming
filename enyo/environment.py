@@ -1,6 +1,6 @@
 import numpy as np
 from enum import Enum
-
+import heapq
 
 class CustomerTypes(Enum):
     Innovator = 99
@@ -27,9 +27,11 @@ class Product(object):
 
 
 class Company(object):
-    def __init__(self, name):
+    def __init__(self, name, market__share):
         self.name = name
+        self.market_share = market__share
         self.product = None
+        self.type = None
         self.competitive_advantage = 0.
         self.industry_attractiveness = 0.
         self.environmental_stability = 0.
@@ -42,7 +44,8 @@ class Company(object):
             'competitive_advantage': {
                 'market_share': 3,
                 'product_quality': 3,
-                'product_life_cycle': 3,
+                'product_life_cycle': 3,  # late to early
+                'product_replacement_cycle': 3, # variable to fixed
                 'customer_loyalty': self.customer_loyalty,
                 'know_how': 3,
                 'vertical_integration': 3,
@@ -73,7 +76,7 @@ class Company(object):
                 'required_to_available_capital': 3,
                 'cash_flow': 3,
                 'ease_of_exit': 3,
-                'risk_doing_business': 3,
+                'risk_doing_business': 3, # much to little
                 'inventory_turnover': 3,
             }
         }
@@ -98,6 +101,17 @@ class Company(object):
         self.industry_attractiveness = ia
         self.environmental_stability = es
         self.financial_strength = fs
+        self._define_quadrant()
+
+    def _define_quadrant(self):
+        # TODO do this
+        attrs = [self.competitive_advantage,
+                 self.industry_attractiveness,
+                 self.environmental_stability,
+                 self.financial_strength]
+        maxes = heapq.nlargest(2, attrs)
+        ind1 = attrs.index(maxes[0])
+        ind2 = attrs.index(maxes[2])
 
     def make_product(self, params):
         self.product = Product()
@@ -111,7 +125,6 @@ class Customer(object):
 
     def __init__(self):
         self.type = None
-        self.loyalty = 0.
         self.sensitivity = {
             'price': None,
             'quality': None,
@@ -122,6 +135,7 @@ class Customer(object):
         self._define_type()
 
     def decide_to_buy(self, companies):
+        # TODO make parameters to buy
         scores = []
         for company in companies:
             temp_product = company.product
@@ -176,13 +190,143 @@ class Market(object):
 #         pass
 
 
-
 class TheGame(object):
 
-    def __init__(self, args):
-        self.market = args.get('market', None)
-        self.companies = args.get('companies', None)
-        self.ours = args.get('ours', None)
+    def __init__(self, market, companies):
+        self.market = market
+        self.companies = companies[1:]
+        self.ours = companies[0]
 
     def play(self):
         pass
+
+market = Market({'market_value': 1000000000000, 'growth_rate': 0.1})
+market.add_customers()
+
+our_company = Company('ours', .4)
+our_company.set_space_params({
+            'competitive_advantage': {
+                'market_share': 5,
+                'product_quality': 4,
+                'product_life_cycle': 2,
+                'product_replacement_cycle': 3,
+                'customer_loyalty': 4,
+                'know_how': 4,
+                'vertical_integration': 3,
+            },
+            'industry_attractiveness': {
+                'growth_potential': 4,
+                'profit_potential': 4,
+                'financial_stability': 4,
+                'know_how': 4,
+                'resource_utilization': 3, # inefficient to efficient
+                'capital_intensity': 3,
+                'ease_of_entry': 5, # easy to difficult
+                'capacity_utilization': 4,
+            },
+            'environmental_stability': {
+                'technological_changes': 2,
+                'rate_of_inflation': 3,
+                'demand_variability': 3,
+                'barriers_to_entry': 4,
+                'competitive_pressure': 2,
+                'price_elasticity_of_demand': 1,
+                'pressure_from_substitutes': 4
+            },
+            'financial_strength': {
+                'ROI': 5,
+                'leverage': 3,
+                'liquidity': 2,
+                'required_to_available_capital': 2,
+                'cash_flow': 4,
+                'ease_of_exit': 5,
+                'risk_doing_business': 4,
+                'inventory_turnover': 4,
+            }
+})
+
+other_company = Company('other1', .4)
+other_company.set_space_params({
+            'competitive_advantage': {
+                'market_share': 5,
+                'product_replacement_cycle': 3,
+                'product_quality': 4,
+                'product_life_cycle': 2,
+                'customer_loyalty': 4,
+                'know_how': 4,
+                'vertical_integration': 3,
+            },
+            'industry_attractiveness': {
+                'growth_potential': 4,
+                'profit_potential': 4,
+                'financial_stability': 4,
+                'know_how': 4,
+                'resource_utilization': 3, # inefficient to efficient
+                'capital_intensity': 3,
+                'ease_of_entry': 5, # easy to difficult
+                'capacity_utilization': 4,
+            },
+            'environmental_stability': {
+                'technological_changes': 2,
+                'rate_of_inflation': 3,
+                'demand_variability': 3,
+                'barriers_to_entry': 4,
+                'competitive_pressure': 2,
+                'price_elasticity_of_demand': 1,
+                'pressure_from_substitutes': 4
+            },
+            'financial_strength': {
+                'ROI': 5,
+                'leverage': 3,
+                'liquidity': 2,
+                'required_to_available_capital': 2,
+                'cash_flow': 4,
+                'ease_of_exit': 5,
+                'risk_doing_business': 4,
+                'inventory_turnover': 4,
+            }
+})
+
+other_company2 = Company('other2', .2)
+other_company2.set_space_params({
+            'competitive_advantage': {
+                'market_share': 2,
+                'product_replacement_cycle': 2,
+                'product_quality': 2,
+                'product_life_cycle': 3,
+                'customer_loyalty': 4,
+                'know_how': 4,
+                'vertical_integration': 3,
+            },
+            'industry_attractiveness': {
+                'growth_potential': 4,
+                'profit_potential': 4,
+                'financial_stability': 4,
+                'know_how': 4,
+                'resource_utilization': 3, # inefficient to efficient
+                'capital_intensity': 3,
+                'ease_of_entry': 5, # easy to difficult
+                'capacity_utilization': 4,
+            },
+            'environmental_stability': {
+                'technological_changes': 2,
+                'rate_of_inflation': 3,
+                'demand_variability': 3,
+                'barriers_to_entry': 4,
+                'competitive_pressure': 2,
+                'price_elasticity_of_demand': 1,
+                'pressure_from_substitutes': 4
+            },
+            'financial_strength': {
+                'ROI': 5,
+                'leverage': 3,
+                'liquidity': 2,
+                'required_to_available_capital': 2,
+                'cash_flow': 4,
+                'ease_of_exit': 5,
+                'risk_doing_business': 4,
+                'inventory_turnover': 4,
+            }
+})
+# TODO add products
+thegame = TheGame(market, [our_company, other_company, other_company2])
