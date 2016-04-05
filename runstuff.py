@@ -44,6 +44,11 @@ our_company.set_space_params({
                 'inventory_turnover': 4,
             }
 })
+our_company.make_product({
+    'price': 80,
+    'innovation': 80,
+    'quality': 80
+})
 
 other_company = Company('other1', .4)
 other_company.set_space_params({
@@ -86,7 +91,11 @@ other_company.set_space_params({
                 'inventory_turnover': 4,
             }
 })
-
+other_company.make_product({
+    'price': 60,
+    'innovation': 70,
+    'quality': 70
+})
 other_company2 = Company('other2', .2)
 other_company2.set_space_params({
             'competitive_advantage': {
@@ -128,5 +137,9 @@ other_company2.set_space_params({
                 'inventory_turnover': 4,
             }
 })
-# TODO add products
+other_company2.make_product({
+    'price': 100,
+    'innovation': 80,
+    'quality': 80
+})
 thegame = TheGame(market, [our_company, other_company, other_company2])
