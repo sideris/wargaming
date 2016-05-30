@@ -2,7 +2,6 @@ import numpy as np
 from enum import Enum
 import heapq
 
-
 class CustomerTypes(Enum):
     Innovator = 99
     Early_Adopter = 96.5
